@@ -1,0 +1,4 @@
+Iter: 500, No_train: 800, No_test: 200
+Training error: 0.998
+Testing error: 0.952
+
