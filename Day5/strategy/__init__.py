@@ -3,7 +3,7 @@ import datetime
 from strategy.Best import Best_weight_compute
 from strategy.EW import EW_weight_compute
 from strategy.MV import MV_weight_compute
-from strategy.UCB import UCB_weight_compute
+from strategy.EG import EG_weight_compute
 
 '''
 context参数说明
@@ -45,10 +45,10 @@ def methods_config():
     Best = {"name": "Best", "function": "Best", "data_type": "density"}
     EW = {"name": "EW", "function": "EW", "data_type": "density"}
     MV = {"name": "MV", "function": "MV", "data_type": "density"}
-    UCB = {"name": "UCB", "function": "UCB", "data_type": "density"}
+    EG = {"name": "EG", "function": "EG", "data_type": "density"}
 
-    methods = [Best, EW, MV, UCB]
-    methods_name = ["Best", "EW", "MV", "UCB"]
+    methods = [Best, EW, EG]
+    methods_name = ["Best", "EW", "EG"]
 
     return methods, methods_name
 
@@ -56,7 +56,7 @@ def methods_config():
 def datasets_config():
     # !!!根据特征工程，init_t一定一定要大于12个单位
     # ff25_csv = {"name": "ff25_csv", "filename": "portfolio25.csv", "span_t": 120, "init_t": 20, "frequency": "month"}
-    #
+    
     # datasets = [ff25_csv]
     # dataset_name = ["ff25_csv"]
 
