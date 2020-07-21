@@ -5,6 +5,8 @@ from strategy.EW import EW_weight_compute
 from strategy.MV import MV_weight_compute
 from strategy.EG import EG_weight_compute
 
+import numpy as np
+
 '''
 context参数说明
 
@@ -47,8 +49,8 @@ def methods_config():
     MV = {"name": "MV", "function": "MV", "data_type": "density"}
     EG = {"name": "EG", "function": "EG", "data_type": "density"}
 
-    methods = [Best, EW, EG]
-    methods_name = ["Best", "EW", "EG"]
+    methods = [Best, EW, MV, EG]
+    methods_name = ["Best", "EW", "MV", "EG"]
 
     return methods, methods_name
 
@@ -81,6 +83,8 @@ def runPortfolio(stocks, portfolio, method, dataset):
     weight_compute = eval(method["function"] + "_weight_compute")
     context = {"frequency": portfolio.frequency, "return_list": []}
 
+    wk = np.array([1/n for i in range(n)], dtype=np.float64)
+
     for k in range(dataset["span_t"] - 1 + dataset["init_t"], m, 1):
         context["Pk"] = P[k]
         context["Rk"] = R[k]
@@ -92,7 +96,12 @@ def runPortfolio(stocks, portfolio, method, dataset):
         context["P"] = P[k - dataset["span_t"] + 1: k + 1]
         context["R"] = R[k - dataset["span_t"] + 1: k + 1]
 
-        wk = weight_compute(n, context)
+        if method["function"] == "EG":
+            wk = weight_compute(n, context, wk)
+        else:
+            wk = weight_compute(n, context)
+        # wk = weight_compute(n, context)
+
 
         portfolio.rebalance(target_weights=wk)
 
