@@ -4,6 +4,7 @@ from strategy.Best import Best_weight_compute
 from strategy.EW import EW_weight_compute
 from strategy.MV import MV_weight_compute
 from strategy.EG import EG_weight_compute
+from strategy.ONS import ONS_weight_compute
 
 import numpy as np
 
@@ -48,9 +49,12 @@ def methods_config():
     EW = {"name": "EW", "function": "EW", "data_type": "density"}
     MV = {"name": "MV", "function": "MV", "data_type": "density"}
     EG = {"name": "EG", "function": "EG", "data_type": "density"}
+    ONS = {"name": "ONS", "function": "ONS", "data_type": "density"}
 
     methods = [Best, EW, MV, EG]
     methods_name = ["Best", "EW", "MV", "EG"]
+    # methods = [Best, ONS]
+    # methods_name = ["Best", "ONS"]
 
     return methods, methods_name
 

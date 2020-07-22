@@ -7,3 +7,6 @@ __pycache__
 *.tar.gz
 .ipynb_checkpoints
 *.ttf
+./Day5/result
+!./Day5/result/cumulative_wealth-dup0.png
+
