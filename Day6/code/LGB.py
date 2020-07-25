@@ -6,12 +6,19 @@ import lightgbm as lgb
 import pandas as pd
 import sklearn
 
+exclude_attr = []
+
 class RiskModel():
     def __init__(self, data_path=None):
         self.data_path = data_path
         self.train, self.test, self.param = self.__construct_dataset()
+
+        self.train = self.train.drop(columns=['Unnamed: 0', 'id'] + exclude_attr)
+        self.test = self.test.drop(columns=['Unnamed: 0', 'id'] + exclude_attr)
+
         self.feature_name = [i for i in self.train.columns if i not in ['Y']]
-        print('train set:', self.train.shape, ', ', 'test set:', self.test.shape)
+        print('train set:', self.train.shape,
+              ', ', 'test set:', self.test.shape)
         self.lgb_train = lgb.Dataset(data=self.train[self.feature_name],
                                      label=self.train['Y'],
                                      feature_name=self.feature_name)
@@ -33,7 +40,7 @@ class RiskModel():
         param['boosting_type'] = 'gbdt'
         param['metric'] = 'auc'
         param['verbose'] = 0
-        param['learning_rate'] = 0.1
+        param['learning_rate'] = 0.10
         param['max_depth'] = -1
         param['feature_fraction'] = 0.8
         param['bagging_fraction'] = 0.8
@@ -56,12 +63,16 @@ class RiskModel():
 
     def evaluate(self):
         test_label = self.test['Y']
-        prob_label = self.gbm.predict(self.test)
+        prob_label = self.gbm.predict(self.test[self.feature_name])
         auc = sklearn.metrics.roc_auc_score(test_label, prob_label)
         return auc
 
 
 if __name__ == "__main__":
-    MODEL = RiskModel(data_path='../Day2/data/')
+    MODEL = RiskModel(data_path='./data/')
     MODEL.fit()
     print('eval auc:', MODEL.evaluate())
+    raw_pre = pd.read_csv('../Day2/data/test_new.csv')
+    pre = raw_pre.drop(columns=['id'] + exclude_attr)
+
+    pd.DataFrame({'id': raw_pre['id'], 'pre': MODEL.gbm.predict(pre)}).to_csv("./3180103012_pre_LGB.csv")
