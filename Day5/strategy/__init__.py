@@ -97,8 +97,10 @@ def runPortfolio(stocks, portfolio, method, dataset):
         context["next_Rk"] = None
         if k < m - 1:
             context["next_Rk"] = R[k + 1]
-        context["P"] = P[k - dataset["span_t"] + 1: k + 1]
-        context["R"] = R[k - dataset["span_t"] + 1: k + 1]
+        # context["P"] = P[k - dataset["span_t"] + 1: k + 1]
+        # context["R"] = R[k - dataset["span_t"] + 1: k + 1]
+        context["P"] = P[k - dataset["span_t"]: k]
+        context["R"] = R[k - dataset["span_t"]: k]
 
         if method["function"] == "EG" or method["function"] == "ONS":
             wk = weight_compute(n, context, wk)

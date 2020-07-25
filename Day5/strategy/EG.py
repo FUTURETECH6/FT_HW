@@ -12,7 +12,7 @@ from trade.portfolio import Portfolio
 span_t = 120
 
 
-def EG_weight_compute(n, context, w_pre=None, Eta=10):
+def EG_weight_compute(n, context, w_pre=None, Eta=0.05):
     x_k = np.array(context["Rk"])
     grad_k = - x_k / np.dot(w_pre, x_k)
     

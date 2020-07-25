@@ -12,7 +12,7 @@ from trade.portfolio import Portfolio
 span_t = 120
 
 
-def ONS_weight_compute(n, context, w_pre=None, Eta=0.4, epsilon=0.01):
+def ONS_weight_compute(n, context, w_pre=None, Eta=0, Beta=1, Gamma=0.125):
     diff = np.array(context["Rk"] - 1)
     A_i_inv = (1 / epsilon) * np.eye(m)
     A_i = epsilon * np.eye(m)
