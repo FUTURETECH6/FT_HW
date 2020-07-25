@@ -8,10 +8,12 @@ import sklearn
 
 exclude_attr = []
 
+file_list = [('Normalization', 'nor'), ('WOE', 'woe'), ('Cross Features', 'cross')]
+
 class RiskModel():
-    def __init__(self, data_path=None):
+    def __init__(self, data_path, ftype):
         self.data_path = data_path
-        self.train, self.test, self.param = self.__construct_dataset()
+        self.train, self.test, self.param = self.__construct_dataset(ftype)
 
         self.train = self.train.drop(columns=['Unnamed: 0', 'id'] + exclude_attr)
         self.test = self.test.drop(columns=['Unnamed: 0', 'id'] + exclude_attr)
@@ -28,9 +30,9 @@ class RiskModel():
         self.evals_result = {}
         self.gbm = None
 
-    def __construct_dataset(self):
-        train = pd.read_csv(self.data_path + 'train.csv')
-        test = pd.read_csv(self.data_path + 'test.csv')
+    def __construct_dataset(self, ftype):
+        train = pd.read_csv(self.data_path + 'train_' + ftype + '.csv')
+        test = pd.read_csv(self.data_path + 'test_' + ftype + '.csv')
 
         train = train.astype('float')
         test = test.astype('float')
@@ -67,12 +69,12 @@ class RiskModel():
         auc = sklearn.metrics.roc_auc_score(test_label, prob_label)
         return auc
 
-
 if __name__ == "__main__":
-    MODEL = RiskModel(data_path='./data/')
-    MODEL.fit()
-    print('eval auc:', MODEL.evaluate())
-    raw_pre = pd.read_csv('../Day2/data/test_new.csv')
-    pre = raw_pre.drop(columns=['id'] + exclude_attr)
+    for f_name, ftype in file_list:
+        MODEL = RiskModel(data_path='./data/', ftype=ftype)
+        MODEL.fit()
+        print('eval auc:', MODEL.evaluate())
+        raw_pre = pd.read_csv('../Day2/data/test_new.csv')
+        pre = raw_pre.drop(columns=['id'] + exclude_attr)
 
-    pd.DataFrame({'id': raw_pre['id'], 'pre': MODEL.gbm.predict(pre)}).to_csv("./3180103012_pre_LGB.csv")
+        # pd.DataFrame({'id': raw_pre['id'], 'pre': MODEL.gbm.predict(pre)}).to_csv("./3180103012_pre_LGB.csv")

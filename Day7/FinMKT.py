@@ -94,6 +94,11 @@ if __name__ == '__main__':
     if(print_report):
         print(classification_report(y_test, y_pred))
 
+    y_pred = predict_model(Perceptron(), x_train, x_test, y_train)
+    print_result('SKPerceptron', y_test, y_pred)
+    if(print_report):
+        print(classification_report(y_test, y_pred))
+
     y_pred = predict_model(KNeighborsClassifier(
         n_neighbors=15, weights='distance'), x_train, x_test, y_train)
     print_result('KNeighborsClassifier', y_test, y_pred)
@@ -137,11 +142,6 @@ if __name__ == '__main__':
 
     y_pred = predict_model(BaggingClassifier(), x_train, x_test, y_train)
     print_result('BaggingClassifier', y_test, y_pred)
-    if(print_report):
-        print(classification_report(y_test, y_pred))
-
-    y_pred = predict_model(Perceptron(), x_train, x_test, y_train)
-    print_result('SKPerceptron', y_test, y_pred)
     if(print_report):
         print(classification_report(y_test, y_pred))
 
