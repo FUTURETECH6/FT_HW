@@ -8,25 +8,26 @@ import sklearn
 
 exclude_attr = []
 
-file_list = [('Normalization', 'nor'), ('WOE', 'woe'), ('Cross Features', 'cross')]
+file_list = [('Unprocessed', 'raw'), ('Normalization', 'nor'), ('WOE', 'woe'), ('CrossFeatures', 'cross')]
 
 class RiskModel():
     def __init__(self, data_path, ftype):
         self.data_path = data_path
         self.train, self.test, self.param = self.__construct_dataset(ftype)
 
-        self.train = self.train.drop(columns=['Unnamed: 0', 'id'] + exclude_attr)
-        self.test = self.test.drop(columns=['Unnamed: 0', 'id'] + exclude_attr)
+        # self.train = self.train.drop(columns=['Unnamed: 0', 'id'] + exclude_attr)
+        # self.test = self.test.drop(columns=['Unnamed: 0', 'id'] + exclude_attr)
 
         self.feature_name = [i for i in self.train.columns if i not in ['Y']]
-        print('train set:', self.train.shape,
-              ', ', 'test set:', self.test.shape)
+        # print('train set:', self.train.shape, ', ', 'test set:', self.test.shape)
         self.lgb_train = lgb.Dataset(data=self.train[self.feature_name],
                                      label=self.train['Y'],
-                                     feature_name=self.feature_name)
+                                     feature_name=self.feature_name,
+                                     silent=True)
         self.lgb_test = lgb.Dataset(data=self.test[self.feature_name],
                                     label=self.test['Y'],
-                                    feature_name=self.feature_name)
+                                    feature_name=self.feature_name,
+                                    silent=True)
         self.evals_result = {}
         self.gbm = None
 
@@ -38,6 +39,7 @@ class RiskModel():
         test = test.astype('float')
 
         param = dict()
+        param['verbose'] = -1
         param['objective'] = 'binary'
         param['boosting_type'] = 'gbdt'
         param['metric'] = 'auc'
@@ -61,7 +63,7 @@ class RiskModel():
                              num_boost_round=1000,
                              evals_result=self.evals_result,
                              valid_sets=[self.lgb_train, self.lgb_test],
-                             verbose_eval=1)
+                             verbose_eval=False)
 
     def evaluate(self):
         test_label = self.test['Y']
@@ -73,8 +75,8 @@ if __name__ == "__main__":
     for f_name, ftype in file_list:
         MODEL = RiskModel(data_path='./data/', ftype=ftype)
         MODEL.fit()
-        print('eval auc:', MODEL.evaluate())
-        raw_pre = pd.read_csv('../Day2/data/test_new.csv')
-        pre = raw_pre.drop(columns=['id'] + exclude_attr)
+        print(f_name, 'eval auc:', str(MODEL.evaluate())[:6])
 
+        # raw_pre = pd.read_csv('../Day2/data/test_new.csv')
+        # pre = raw_pre.drop(columns=['id'] + exclude_attr)
         # pd.DataFrame({'id': raw_pre['id'], 'pre': MODEL.gbm.predict(pre)}).to_csv("./3180103012_pre_LGB.csv")

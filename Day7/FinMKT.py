@@ -100,7 +100,7 @@ if __name__ == '__main__':
         print(classification_report(y_test, y_pred))
 
     y_pred = predict_model(KNeighborsClassifier(
-        n_neighbors=15, weights='distance'), x_train, x_test, y_train)
+        n_neighbors=30, weights='distance'), x_train, x_test, y_train)
     print_result('KNeighborsClassifier', y_test, y_pred)
     if(print_report):
         print(classification_report(y_test, y_pred))

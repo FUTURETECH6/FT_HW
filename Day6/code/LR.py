@@ -7,8 +7,8 @@ from sklearn.linear_model import LogisticRegression
 
 exclude_attr = []
 
-file_list = [('Normalization', './data/train_nor.csv', './data/test_nor.csv'), ('WOE', './data/train_woe.csv', './data/test_woe.csv'),
-             ('Cross Features', './data/train_cross.csv', './data/test_cross.csv')]
+file_list = [('Unprocessed', './data/train_raw.csv', './data/test_raw.csv'), ('Normalization', './data/train_nor.csv', './data/test_nor.csv'),
+             ('WOE', './data/train_woe.csv', './data/test_woe.csv'), ('CrossFeatures', './data/train_cross.csv', './data/test_cross.csv')]
 
 if __name__ == "__main__":
     for f_name, train_file, test_file in file_list:
@@ -16,11 +16,11 @@ if __name__ == "__main__":
         raw_test = pd.read_csv(test_file).astype('float')
 
         train_X = raw_train.drop(
-            columns=['Unnamed: 0', 'Y'] + exclude_attr)
+            columns=['Y'] + exclude_attr)
         test_X = raw_test.drop(
-            columns=['Unnamed: 0', 'Y'] + exclude_attr)
+            columns=['Y'] + exclude_attr)
 
-        LR = LogisticRegression()
+        LR = LogisticRegression(max_iter=1000)
         LR.fit(train_X, raw_train['Y'])
         print(f_name, 'eval auc:', LR.score(test_X, raw_test['Y']))
 

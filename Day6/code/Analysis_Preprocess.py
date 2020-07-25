@@ -20,16 +20,16 @@ data = pd.read_csv(r"../Day2/data/train_new.csv").drop(columns=['id'])
 # ### 关联性
 
 # %%
-corr_map = data.corr()
-plt.figure(figsize=(20, 20))
-mask = np.triu(np.ones_like(corr_map, dtype=np.bool))
-cmap = sns.diverging_palette(150, 275, s=80, l=55, n=12)
-sns.heatmap(corr_map, mask=mask, cmap=cmap, square=True, linewidths=.5)
-plt.savefig('./assets/corr.svg', format='svg')
+# corr_map = data.corr()
+# plt.figure(figsize=(20, 20))
+# mask = np.triu(np.ones_like(corr_map, dtype=np.bool))
+# cmap = sns.diverging_palette(150, 275, s=80, l=55, n=12)
+# sns.heatmap(corr_map, mask=mask, cmap=cmap, square=True, linewidths=.5)
+# plt.savefig('./assets/corr.svg', format='svg')
 
 
 # %%
-data.corr()['Y'].where(abs(data.corr()['Y']) > 0.12).drop(labels=['Y']).dropna()
+# data.corr()['Y'].where(abs(data.corr()['Y']) > 0.12).drop(labels=['Y']).dropna()
 
 # %% [markdown]
 # ### WOE与IV指标
@@ -165,24 +165,34 @@ IV = IV.set_index('VAR_NAME').loc[[('X' + str(i)) for i in range(1, 73)]].reset_
 
 
 # %%
-final_iv.head(10)
+# final_iv.head(10)
 
 
 # %%
-plt.figure(figsize=(30,15))
-sns.catplot(x='VAR_NAME', y='IV', data=IV, aspect=4)
+# plt.figure(figsize=(30,15))
+# sns.catplot(x='VAR_NAME', y='IV', data=IV, aspect=4)
 
 
 # %%
-IV.where(IV > 0.1).dropna().sort_values(by='IV', ascending=False)
+# IV.where(IV > 0.1).dropna().sort_values(by='IV', ascending=False)
 
 # %% [markdown]
 # ## 特征工程
+
+data.fillna(-1, inplace=True)
+
+num_train = int(data.shape[0] * 0.8)
+train_data = data[:num_train]
+test_data = data[num_train:]
+train_data.to_csv('./data/train_raw.csv', sep=',', index=False, header=True)
+test_data.to_csv('./data/test_raw.csv', sep=',', index=False, header=True)
+
 # %% [markdown]
 # ### Normalization
 
 # %%
 digital_cols = data.dtypes[data.dtypes != 'object'].index
+digital_cols = digital_cols[digital_cols != 'Y']
 nor_data = data.copy()
 nor_data[digital_cols] = nor_data[digital_cols].apply(lambda x: (x - x.mean()) / (x.std()))
 nor_data.head(10)
@@ -193,13 +203,13 @@ num_train = int(nor_data.shape[0] * 0.8)
 train_data = nor_data[:num_train]
 test_data = nor_data[num_train:]
 train_data.to_csv('./data/train_nor.csv', sep=',', index=False, header=True)
-train_data.to_csv('./data/test_nor.csv', sep=',', index=False, header=True)
+test_data.to_csv('./data/test_nor.csv', sep=',', index=False, header=True)
 
 # %% [markdown]
 # ### WOE
 
 # %%
-data.columns.difference(['target'])
+# data.columns.difference(['target'])
 
 
 # %%
@@ -226,15 +236,15 @@ for var in transform_vars_list:
 
 
 # %%
-woe_data.head(10)
+# woe_data.head(10)
 
 
 # %%
 num_train = int(woe_data.shape[0] * 0.8)
-train_data = woe_data[:num_train]
-test_data = woe_data[num_train:]
+train_data = woe_data.drop(columns=[('X' + str(i)) for i in range(1, 73)])[:num_train]
+test_data = woe_data.drop(columns=[('X' + str(i)) for i in range(1, 73)])[num_train:]
 train_data.to_csv('./data/train_woe.csv', sep=',', index=False, header=True)
-train_data.to_csv('./data/test_woe.csv', sep=',', index=False, header=True)
+test_data.to_csv('./data/test_woe.csv', sep=',', index=False, header=True)
 
 # %% [markdown]
 # ### 特征交叉
@@ -249,13 +259,15 @@ def add_cross_feature(data, feature_1, feature_2):
 
 # %%
 cross_data = data.copy()
-cross_data.X27 = pd.qcut(cross_data.X27, q=10, duplicates='drop')
-cross_data.X30 = pd.qcut(cross_data.X30, q=10, duplicates='drop')
+# cross_data.X27 = pd.qcut(cross_data.X27, q=10, duplicates='drop')
+# cross_data.X30 = pd.qcut(cross_data.X30, q=10, duplicates='drop')
 cross_data = add_cross_feature(cross_data, 'X27', 'X30')
+cross_data = add_cross_feature(cross_data, 'X27', 'X16')
+cross_data = add_cross_feature(cross_data, 'X16', 'X30')
 
 
 # %%
-cross_data.head(10)
+# cross_data.head(10)
 
 
 # %%
@@ -263,6 +275,4 @@ num_train = int(cross_data.shape[0] * 0.8)
 train_data = cross_data[:num_train]
 test_data = cross_data[num_train:]
 train_data.to_csv('./data/train_cross.csv', sep=',', index=False, header=True)
-train_data.to_csv('./data/test_cross.csv', sep=',', index=False, header=True)
-
-
+test_data.to_csv('./data/test_cross.csv', sep=',', index=False, header=True)
