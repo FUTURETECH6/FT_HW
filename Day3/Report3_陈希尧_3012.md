@@ -218,7 +218,7 @@ threshold: distance threshold.
 
 + K-means:
     - 简单快速 (思想很简单易懂）
-    - 􏰡􏱂􏰞􏰀􏰗􏰌􏰮􏰢聚类结果在向量空间为球状（凸集）
+    - 聚类结果在向量空间为球状（凸集）
     - 聚类结果易受到起始点影响
     - 聚类结果易受到噪声（脏数据）影响
 + Spectral Clustering
