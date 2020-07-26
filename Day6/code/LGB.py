@@ -45,11 +45,11 @@ class RiskModel():
         param['metric'] = 'auc'
         param['verbose'] = 0
         param['learning_rate'] = 0.10
-        param['max_depth'] = -1
+        param['max_depth'] = 5
         param['feature_fraction'] = 0.8
         param['bagging_fraction'] = 0.8
         param['bagging_freq'] = 1
-        param['num_leaves'] = 15
+        param['num_leaves'] = 30
         param['min_data_in_leaf'] = 64
         param['is_unbalance'] = False
         param['verbose'] = -1
@@ -77,6 +77,7 @@ if __name__ == "__main__":
         MODEL.fit()
         print(f_name, 'eval auc:', str(MODEL.evaluate())[:6])
 
-        # raw_pre = pd.read_csv('../Day2/data/test_new.csv')
-        # pre = raw_pre.drop(columns=['id'] + exclude_attr)
-        # pd.DataFrame({'id': raw_pre['id'], 'pre': MODEL.gbm.predict(pre)}).to_csv("./3180103012_pre_LGB.csv")
+        raw_for_pred = pd.read_csv('../Day2/data/test_new.csv')
+        for_pre = raw_for_pred.drop(columns=['id'] + exclude_attr)
+        pd.DataFrame({'id': raw_for_pred['id'], 'pre': MODEL.gbm.predict(for_pre)}) \
+            .to_csv("./3180103012_pre.csv")

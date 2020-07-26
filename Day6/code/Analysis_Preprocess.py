@@ -274,5 +274,7 @@ cross_data = add_cross_feature(cross_data, 'X16', 'X30')
 num_train = int(cross_data.shape[0] * 0.8)
 train_data = cross_data[:num_train]
 test_data = cross_data[num_train:]
+# train_data = cross_data.drop(columns=['X16', 'X27', 'X30'])[:num_train]
+# test_data = cross_data.drop(columns=['X16', 'X27', 'X30'])[num_train:]
 train_data.to_csv('./data/train_cross.csv', sep=',', index=False, header=True)
 test_data.to_csv('./data/test_cross.csv', sep=',', index=False, header=True)
