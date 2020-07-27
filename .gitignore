@@ -13,4 +13,5 @@ Day6/data
 Day6/*.csv
 !Day5/result/cw*
 !Day5/result/weight*
+!Day5/result/Result*
 
