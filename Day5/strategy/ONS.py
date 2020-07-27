@@ -7,25 +7,35 @@ import numpy as np
 import os
 from data_load.stocks import Stocks
 from trade.portfolio import Portfolio
+import cvxpy
 
 
 span_t = 120
 
 
-def ONS_weight_compute(n, context, w_pre=None, Eta=0, Beta=1, Gamma=0.125):
-    diff = np.array(context["Rk"] - 1)
-    A_i_inv = (1 / epsilon) * np.eye(m)
-    A_i = epsilon * np.eye(m)
-    # update w_i
-    grad_i = grad(w_pre, diff)
-    hess_i = np.outer(grad_i, grad_i)
-    A_i += hess_i
-    A_i_inv -= A_i_inv.dot(hess_i).dot(A_i_inv) / (1 + grad_i.dot(A_i_inv).dot(grad_i))
-    w_k = proj_netwon(A_i, w_pre - Eta * A_i_inv.dot(grad_i))
+def proj_netwon(A, y):
+    n = A.shape[0]
+    x = cvxpy.Variable(n)
+    objective = cvxpy.Minimize(cvxpy.quad_form(x - y, A))
+    constraints = [x >= 0, cvxpy.sum(x) == 1]
+    prob = cvxpy.Problem(objective, constraints)
+    prob.solve()
+    return x.value
 
-    return w_k
+
+def ONS_weight_compute(n, context, w_pre, Ak_inv, eta=0.02, epsilon=0.125):
+    x_k = np.array(context["Rk"])
+    w = w_pre
+    Ak = epsilon * np.eye(n)
+    grad_k = - x_k / np.dot(w, x_k)
+    hess_k = np.outer(grad_k, grad_k)
+    Ak += hess_k
+    Ak_inv -= Ak_inv.dot(hess_k).dot(Ak_inv) / \
+        (1 + grad_k.dot(Ak_inv).dot(grad_k))
+    w = proj_netwon(Ak, w - eta * Ak_inv.dot(grad_k))
+
+    return w, Ak_inv
 
 
 if __name__ == "__main__":
     print("this is ONS Portfolio")
-

@@ -51,8 +51,8 @@ def methods_config():
     EG = {"name": "EG", "function": "EG", "data_type": "density"}
     ONS = {"name": "ONS", "function": "ONS", "data_type": "density"}
 
-    methods = [Best, EW, MV, EG]
-    methods_name = ["Best", "EW", "MV", "EG"]
+    methods = [Best, EW, MV, EG, ONS]
+    methods_name = ["Best", "EW", "MV", "EG", "ONS"]
     # methods = [Best, ONS]
     # methods_name = ["Best", "ONS"]
 
@@ -62,11 +62,12 @@ def methods_config():
 def datasets_config():
     # !!!根据特征工程，init_t一定一定要大于12个单位
     # ff25_csv = {"name": "ff25_csv", "filename": "portfolio25.csv", "span_t": 120, "init_t": 20, "frequency": "month"}
-    
+
     # datasets = [ff25_csv]
     # dataset_name = ["ff25_csv"]
 
-    NYSE = {"name": "NYSE", "filename": "NYSE.txt", "span_t": 120, "init_t": 20, "frequency": "none"}
+    NYSE = {"name": "NYSE", "filename": "NYSE.txt",
+            "span_t": 120, "init_t": 20, "frequency": "none"}
 
     datasets = [NYSE]
     dataset_name = ["NYSE"]
@@ -88,6 +89,10 @@ def runPortfolio(stocks, portfolio, method, dataset):
     context = {"frequency": portfolio.frequency, "return_list": []}
 
     wk = np.array([1/n for i in range(n)], dtype=np.float64)
+    Ak_inv = (1 / 0.125) * np.eye(n)
+    Ak = 0.125 * np.eye(n)
+    grad_k = np.zeros(n)
+    hess_k = np.zeros((n, n))
 
     for k in range(dataset["span_t"] - 1 + dataset["init_t"], m, 1):
         context["Pk"] = P[k]
@@ -102,12 +107,15 @@ def runPortfolio(stocks, portfolio, method, dataset):
         context["P"] = P[k - dataset["span_t"]: k]
         context["R"] = R[k - dataset["span_t"]: k]
 
-        if method["function"] == "EG" or method["function"] == "ONS":
+        if method["function"] == "ONS":
+            # wk, grad_k, hess_k, Ak, Ak_inv = weight_compute(
+            #     n, context, wk, grad_k, hess_k, Ak, Ak_inv)
+            wk, Ak_inv = weight_compute(n, context, wk, Ak_inv)
+        elif method["function"] == "EG":
             wk = weight_compute(n, context, wk)
         else:
             wk = weight_compute(n, context)
         # wk = weight_compute(n, context)
-
 
         portfolio.rebalance(target_weights=wk)
 

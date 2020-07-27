@@ -12,11 +12,11 @@ from trade.portfolio import Portfolio
 span_t = 120
 
 
-def EG_weight_compute(n, context, w_pre=None, Eta=0.05):
+def EG_weight_compute(n, context, w_pre=None, eta=0.05):
     x_k = np.array(context["Rk"])
     grad_k = - x_k / np.dot(w_pre, x_k)
     
-    w_k = w_pre * np.exp(-Eta * grad_k)
+    w_k = w_pre * np.exp(-eta * grad_k)
     w_k = w_k / np.sum(w_k)
     # if np.isnan(w_k).any():
     #     w_k = np.zeros(n)

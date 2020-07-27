@@ -7,7 +7,10 @@ __pycache__
 *.tar.gz
 .ipynb_checkpoints
 *.ttf
-Day5/result
-!Day5/result/cumulative_wealth-dup0.png
+Day5/result/*
+# !Day5/result/cumulative_wealth-dup0.png
 Day6/data
 Day6/*.csv
+!Day5/result/cw*
+!Day5/result/weight*
+

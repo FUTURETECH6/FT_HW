@@ -7,7 +7,7 @@ import numpy as np
 import os
 from data_load.stocks import Stocks
 from trade.portfolio import Portfolio
-from cvxopt import solvers,matrix,blas
+from cvxopt import solvers, matrix, blas
 
 
 span_t = 120

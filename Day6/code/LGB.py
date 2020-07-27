@@ -76,8 +76,11 @@ if __name__ == "__main__":
         MODEL = RiskModel(data_path='./data/', ftype=ftype)
         MODEL.fit()
         print(f_name, 'eval auc:', str(MODEL.evaluate())[:6])
-
-        raw_for_pred = pd.read_csv('../Day2/data/test_new.csv')
-        for_pre = raw_for_pred.drop(columns=['id'] + exclude_attr)
-        pd.DataFrame({'id': raw_for_pred['id'], 'pre': MODEL.gbm.predict(for_pre)}) \
-            .to_csv("./3180103012_pre.csv")
+        if f_name == 'Unprocessed':
+            raw_for_pred = pd.read_csv('../Day2/data/test_new.csv')
+            for_pre = raw_for_pred.drop(columns=['id'] + exclude_attr)
+            # digital_cols = for_pre.dtypes[for_pre.dtypes != 'object'].index
+            # digital_cols = digital_cols[digital_cols != 'Y']
+            # for_pre[digital_cols] = for_pre[digital_cols].apply(lambda x: (x - x.mean()) / (x.std()))
+            pd.DataFrame({'id': raw_for_pred['id'], 'pre': MODEL.gbm.predict(for_pre)}) \
+                .to_csv("./3180103012_pre.csv")
