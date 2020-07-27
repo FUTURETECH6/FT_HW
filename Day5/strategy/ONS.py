@@ -25,16 +25,18 @@ def proj_netwon(A, y):
 
 def ONS_weight_compute(n, context, w_pre, Ak_inv, eta=0.02, epsilon=0.125):
     x_k = np.array(context["Rk"])
-    w = w_pre
+    w_k = w_pre
     Ak = epsilon * np.eye(n)
-    grad_k = - x_k / np.dot(w, x_k)
+    grad_k = - x_k / np.dot(w_k, x_k)
     hess_k = np.outer(grad_k, grad_k)
     Ak += hess_k
     Ak_inv -= Ak_inv.dot(hess_k).dot(Ak_inv) / \
         (1 + grad_k.dot(Ak_inv).dot(grad_k))
-    w = proj_netwon(Ak, w - eta * Ak_inv.dot(grad_k))
-
-    return w, Ak_inv
+    w_k = proj_netwon(Ak, w_k - eta * Ak_inv.dot(grad_k))
+    # if np.isnan(w_k).any():
+    #     w_k = np.zeros(n)
+    #     w_k[np.argmax(context["Rk"])] = 1
+    return w_k, Ak_inv
 
 
 if __name__ == "__main__":

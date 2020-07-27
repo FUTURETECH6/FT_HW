@@ -14,4 +14,3 @@ def getRandomN(n, N):
     while len(choises) < n:
         choises.add(random.randint(0, N - 1))
     return np.array(list(choises))
-

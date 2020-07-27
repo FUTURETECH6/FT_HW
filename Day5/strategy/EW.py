@@ -21,4 +21,3 @@ def EW_weight_compute(n, context=None):
 
 if __name__ == "__main__":
     print("this is EW Portfolio")
-

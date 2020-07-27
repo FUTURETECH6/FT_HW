@@ -90,9 +90,9 @@ def runPortfolio(stocks, portfolio, method, dataset):
 
     wk = np.array([1/n for i in range(n)], dtype=np.float64)
     Ak_inv = (1 / 0.125) * np.eye(n)
-    Ak = 0.125 * np.eye(n)
-    grad_k = np.zeros(n)
-    hess_k = np.zeros((n, n))
+    # Ak = 0.125 * np.eye(n)
+    # grad_k = np.zeros(n)
+    # hess_k = np.zeros((n, n))
 
     for k in range(dataset["span_t"] - 1 + dataset["init_t"], m, 1):
         context["Pk"] = P[k]
@@ -115,7 +115,6 @@ def runPortfolio(stocks, portfolio, method, dataset):
             wk = weight_compute(n, context, wk)
         else:
             wk = weight_compute(n, context)
-        # wk = weight_compute(n, context)
 
         portfolio.rebalance(target_weights=wk)
 
